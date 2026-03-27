@@ -8,14 +8,18 @@ import (
 	"os"
 )
 
-func AnalysewithGemini(text string)(map[string]interface{} , error){
-   
+func AnalyzeWithGemini(text string) (map[string]interface{}, error) {
+
 	apiKey := os.Getenv("GEMINI_API_KEY")
 
+	// Correct URL
 	url := fmt.Sprintf(
 		"https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=%s",
 		apiKey,
-		prompt := `
+	)
+
+	// Correct prompt
+	prompt := `
 You are an AI misinformation detector.
 
 Analyze the following text and determine:
@@ -33,24 +37,26 @@ Return ONLY JSON in this format:
 }
 
 Text:
-`
-+ text:
+` + text
 
-requestBody := map[string]interface{}{
-	"contents": []map[string]interface{}{
-		{
-			"parts": []map[string]string{
-				{"text": prompt},
+	// Request body
+	requestBody := map[string]interface{}{
+		"contents": []map[string]interface{}{
+			{
+				"parts": []map[string]string{
+					{"text": prompt},
+				},
 			},
 		},
-	},
-}
+	}
 
-jsonData, _ := json.Marshal(requestBody)
+	jsonData, _ := json.Marshal(requestBody)
 
-req, _ := http.NewRequest("POST", url, bytes.NewBuffer(jsonData))
+	// Create request
+	req, _ := http.NewRequest("POST", url, bytes.NewBuffer(jsonData))
 	req.Header.Set("Content-Type", "application/json")
 
+	// Send request
 	client := &http.Client{}
 	resp, err := client.Do(req)
 
@@ -60,6 +66,7 @@ req, _ := http.NewRequest("POST", url, bytes.NewBuffer(jsonData))
 
 	defer resp.Body.Close()
 
+	// Decode response
 	var result map[string]interface{}
 	json.NewDecoder(resp.Body).Decode(&result)
 
