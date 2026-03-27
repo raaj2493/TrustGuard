@@ -1,33 +1,30 @@
 package main
 
 import (
+	"log"
+
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
+	"internals/handlers"
 )
 
-func main(){
+func main() {
+
+	// Load environment variables
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
 	r := gin.Default()
-	// Test route
+
 	r.GET("/", func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"message": "TrustGuard Backend Running 🚀",
 		})
 	})
 
-	r.POST("/analyse" , func( c *gin.Context)){
-		var req struct {
-			Text string `json:"text"`
-		}
-
-		if err := c.BindJSON(&req); err != nil {
-			c.JSON(400, gin.H{"error": err.Error()})
-			return
-		}
-
-		c.json(200 , gin.H{
-			"prediction" : "false",
-			"confidence" : 90,
-		})
-	}
+	r.POST("/analyze", handlers.AnalyzeNews)
 
 	r.Run(":8080")
 }
