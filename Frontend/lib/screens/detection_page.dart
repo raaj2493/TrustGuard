@@ -1,3 +1,7 @@
+// ignore_for_file: deprecated_member_use
+
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:trust_guard/screens/result_page.dart';
 import 'package:trust_guard/screens/history_page.dart';
@@ -32,38 +36,63 @@ class _DetectionPageState extends State<DetectionPage>
   }
 
   Future<void> _analyze() async {
+    if (_textController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter some text to analyze')),
+      );
+      return;
+    }
+
     setState(() {
       _isLoading = true;
     });
 
-    // Simulate API call
-    await Future.delayed(const Duration(seconds: 3));
+    try {
+      final response = await http.post(
+        Uri.parse('http://localhost:8080/analyze'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'text': _textController.text}),
+      );
 
-    if (!mounted) return;
+      if (!mounted) return;
 
-    setState(() {
-      _isLoading = false;
-    });
+      setState(() {
+        _isLoading = false;
+      });
 
-    // Dummy Result Data
-    final result = {
-      "score": 45.0, // Example Suspicious
-      "status": "Suspicious",
-      "explanation":
-          "The text contains patterns often associated with phishing attempts. The urgency in the language 'Act Now' is a common indicator.",
-      "recommendation":
-          "Do not click any links provided in the message. verify the sender's identity independently.",
-      "details": [
-        {"icon": Icons.warning, "text": "Urgency Detected"},
-        {"icon": Icons.link_off, "text": "Unverified Link"},
-        {"icon": Icons.history, "text": "Similar Scam Reported"},
-      ],
-    };
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        
+        final result = {
+          "score": (data['confidence'] ?? 0).toDouble(),
+          "status": data['prediction'] ?? "Unknown",
+          "explanation": data['reason'] ?? "No reason provided.",
+          "recommendation":
+              data['prediction'] == "Fake News" ? "Do not trust this information. Verify independently." : "This information appears to be reliable.",
+          "details": [
+            {"icon": Icons.analytics, "text": "AI Confidence: ${data['confidence']}%"},
+            {"icon": data['prediction'] == "Fake News" ? Icons.warning : Icons.check_circle, "text": data['prediction']},
+          ],
+        };
 
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => ResultPage(resultData: result)),
-    );
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => ResultPage(resultData: result)),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to analyze text. Server error.')),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error connecting to backend: $e')),
+      );
+    }
   }
 
   @override
