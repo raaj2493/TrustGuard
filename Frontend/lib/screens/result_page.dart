@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use, curly_braces_in_flow_control_structures
+
 import 'package:flutter/material.dart';
 import 'package:trust_guard/widgets/custom_navbar.dart';
 import 'package:trust_guard/widgets/glass_card.dart';

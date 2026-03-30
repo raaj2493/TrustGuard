@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:trust_guard/screens/detection_page.dart';
 import 'package:trust_guard/screens/history_page.dart';
