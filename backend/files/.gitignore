@@ -1,0 +1,15 @@
+# Compiled binaries
+trustguard
+*.exe
+*.out
+
+# Environment secrets — NEVER commit these
+.env
+
+# Go module cache
+vendor/
+
+# IDE files
+.idea/
+.vscode/
+*.swp
