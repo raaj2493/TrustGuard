@@ -32,6 +32,7 @@ func main() {
 	})
 
 	r.POST("/analyze", handlers.AnalyzedNews)
+	r.POST("/analyze-url", handlers.AnalyzeURL)
 
-	r.Run(":8080")
+	r.Run(":8081")
 }

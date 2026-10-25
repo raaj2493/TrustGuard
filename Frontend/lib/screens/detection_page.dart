@@ -20,27 +20,59 @@ class _DetectionPageState extends State<DetectionPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final TextEditingController _textController = TextEditingController();
+  final TextEditingController _urlController = TextEditingController();
   bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
+    _tabController.addListener(() {
+      if (mounted) setState(() {});
+    });
   }
 
   @override
   void dispose() {
     _tabController.dispose();
     _textController.dispose();
+    _urlController.dispose();
     super.dispose();
   }
 
   Future<void> _analyze() async {
-    if (_textController.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter some text to analyze')),
-      );
-      return;
+    final bool isUrlTab = _tabController.index == 1;
+
+    String endpoint = 'http://localhost:8081/analyze';
+    Map<String, dynamic> requestBody = {};
+    String inputText = '';
+
+    if (isUrlTab) {
+      String url = _urlController.text.trim();
+      if (url.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Please enter a website or article URL to analyze'),
+          ),
+        );
+        return;
+      }
+      if (!url.startsWith('http://') && !url.startsWith('https://')) {
+        url = 'https://$url';
+        _urlController.text = url;
+      }
+      endpoint = 'http://localhost:8081/analyze-url';
+      requestBody = {'url': url};
+      inputText = url;
+    } else {
+      inputText = _textController.text.trim();
+      if (inputText.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please enter some text to analyze')),
+        );
+        return;
+      }
+      requestBody = {'text': inputText};
     }
 
     setState(() {
@@ -49,9 +81,9 @@ class _DetectionPageState extends State<DetectionPage>
 
     try {
       final response = await http.post(
-        Uri.parse('http://localhost:8080/analyze'),
+        Uri.parse(endpoint),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'text': _textController.text}),
+        body: jsonEncode(requestBody),
       );
 
       if (!mounted) return;
@@ -62,16 +94,40 @@ class _DetectionPageState extends State<DetectionPage>
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        
+        final metrics = data['metrics'] ?? {};
+
         final result = {
-          "score": (data['confidence'] ?? 0).toDouble(),
+          "score": (metrics['trust_score'] ?? data['confidence'] ?? 0).toDouble(),
           "status": data['prediction'] ?? "Unknown",
           "explanation": data['reason'] ?? "No reason provided.",
+          "original_text": isUrlTab ? (data['scraped_title'] ?? inputText) : inputText,
+          "metrics": metrics,
+          "flagged_sentences": data['flagged_sentences'] ?? [],
+          "sources": data['sources'] ?? [],
+          "search_queries": data['search_queries'] ?? [],
+          "scraped_title": data['scraped_title'],
+          "scraped_url": data['scraped_url'],
           "recommendation":
-              data['prediction'] == "Fake News" ? "Do not trust this information. Verify independently." : "This information appears to be reliable.",
+              data['prediction'] == "Dangerous Scam" ||
+                      data['prediction'] == "Fake News / Misinformation" ||
+                      data['prediction'] == "Fake News"
+                  ? "Do not trust this information. Verify independently with official primary sources."
+                  : (data['prediction'] == "Common Myth / Misconception"
+                      ? "This statement is a widespread myth or urban legend. While not dangerous, it is factually inaccurate."
+                      : "This information appears to be reliable based on live fact-checking and AI analysis."),
           "details": [
-            {"icon": Icons.analytics, "text": "AI Confidence: ${data['confidence']}%"},
-            {"icon": data['prediction'] == "Fake News" ? Icons.warning : Icons.check_circle, "text": data['prediction']},
+            {
+              "icon": Icons.analytics,
+              "text": "AI Confidence: ${data['confidence']}%",
+            },
+            {
+              "icon":
+                  data['prediction'] == "Fake News" ||
+                          data['prediction'] == "Fake News / Misinformation"
+                      ? Icons.warning
+                      : Icons.check_circle,
+              "text": data['prediction'],
+            },
           ],
         };
 
@@ -80,8 +136,13 @@ class _DetectionPageState extends State<DetectionPage>
           MaterialPageRoute(builder: (_) => ResultPage(resultData: result)),
         );
       } else {
+        String errorMsg = 'Server error (${response.statusCode})';
+        try {
+          final errBody = jsonDecode(response.body);
+          if (errBody['error'] != null) errorMsg = errBody['error'];
+        } catch (_) {}
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to analyze text. Server error.')),
+          SnackBar(content: Text('Failed: $errorMsg')),
         );
       }
     } catch (e) {
@@ -153,11 +214,56 @@ class _DetectionPageState extends State<DetectionPage>
                             ),
                             const SizedBox(height: 10),
                             Text(
-                              "Paste text, URL, or upload an image to check for safety.",
+                              "Paste text, URL, or select a sample claim to check for safety.",
                               textAlign: TextAlign.center,
                               style: Theme.of(context).textTheme.bodyLarge,
                             ),
-                            const SizedBox(height: 40),
+                            const SizedBox(height: 30),
+
+                            // Quick Try Examples
+                            Row(
+                              children: [
+                                const Icon(
+                                  Icons.lightbulb_outline_rounded,
+                                  size: 16,
+                                  color: AppTheme.primaryColor,
+                                ),
+                                const SizedBox(width: 6),
+                                const Text(
+                                  "Try a sample:",
+                                  style: TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 10),
+                            Wrap(
+                              spacing: 8,
+                              runSpacing: 8,
+                              children: [
+                                _buildSampleChip(
+                                  "🏛️ Great Wall myth",
+                                  "The Great Wall of China is visible from space with the naked eye.",
+                                ),
+                                _buildSampleChip(
+                                  "🍋 Miracle Cure claim",
+                                  "SHOCKING DISCOVERY! Drinking lemon water at midnight eliminates all diseases instantly!",
+                                ),
+                                _buildSampleChip(
+                                  "⚠️ Bank Scam alert",
+                                  "URGENT: Your bank account access has been suspended due to suspicious activity. Click http://secure-bank-login.xyz to verify immediately.",
+                                ),
+                                _buildSampleChip(
+                                  "🔭 Verified News",
+                                  "NASA scientists have published new observations from the James Webb Space Telescope revealing distant galaxy formations.",
+                                ),
+                              ],
+                            ),
+
+                            const SizedBox(height: 24),
 
                             // Input Card
                             GlassCard(
@@ -186,56 +292,189 @@ class _DetectionPageState extends State<DetectionPage>
 
                                   // Content
                                   Container(
-                                    height: 300,
-                                    padding: const EdgeInsets.all(24),
+                                    height: 320,
+                                    padding: const EdgeInsets.all(20),
                                     child: TabBarView(
                                       controller: _tabController,
                                       children: [
-                                        // Text Input
-                                        TextField(
-                                          controller: _textController,
-                                          maxLines: 10,
-                                          decoration: InputDecoration(
-                                            hintText:
-                                                "Paste the message or article text here...",
-                                            hintStyle: TextStyle(
-                                              color: Colors.white30,
+                                        // Text Input Column
+                                        Column(
+                                          children: [
+                                            Expanded(
+                                              child: Stack(
+                                                children: [
+                                                  TextField(
+                                                    controller: _textController,
+                                                    maxLines: 10,
+                                                    onChanged: (_) => setState(() {}),
+                                                    decoration: InputDecoration(
+                                                      hintText:
+                                                          "Paste the message, claim, or article text here to analyze...",
+                                                      hintStyle: const TextStyle(
+                                                        color: Colors.white30,
+                                                      ),
+                                                      border: OutlineInputBorder(
+                                                        borderRadius:
+                                                            BorderRadius.circular(12),
+                                                        borderSide: BorderSide.none,
+                                                      ),
+                                                      filled: true,
+                                                      fillColor: Colors.black12,
+                                                    ),
+                                                    style: const TextStyle(
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
+                                                  if (_textController.text.isNotEmpty)
+                                                    Positioned(
+                                                      top: 8,
+                                                      right: 8,
+                                                      child: IconButton(
+                                                        icon: const Icon(
+                                                          Icons.close,
+                                                          size: 18,
+                                                          color: Colors.white54,
+                                                        ),
+                                                        onPressed: () {
+                                                          setState(() {
+                                                            _textController.clear();
+                                                          });
+                                                        },
+                                                      ),
+                                                    ),
+                                                ],
+                                              ),
                                             ),
-                                            border: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
-                                              borderSide: BorderSide.none,
+                                            const SizedBox(height: 8),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                const Expanded(
+                                                  child: Text(
+                                                    "Supports plain text, news clips, or social posts",
+                                                    overflow: TextOverflow.ellipsis,
+                                                    style: TextStyle(
+                                                      color: Colors.white38,
+                                                      fontSize: 12,
+                                                    ),
+                                                  ),
+                                                ),
+                                                const SizedBox(width: 8),
+                                                Text(
+                                                  "${_textController.text.length} chars • ${_textController.text.trim().isEmpty ? 0 : _textController.text.trim().split(RegExp(r'\s+')).length} words",
+                                                  style: const TextStyle(
+                                                    color: Colors.white54,
+                                                    fontSize: 12,
+                                                  ),
+                                                ),
+                                              ],
                                             ),
-                                            filled: true,
-                                            fillColor: Colors.black12,
-                                          ),
-                                          style: const TextStyle(
-                                            color: Colors.white,
-                                          ),
+                                          ],
                                         ),
                                         // URL Input
                                         Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
+                                            const SizedBox(height: 8),
+                                            const Text(
+                                              "Enter Web Article or News Link",
+                                              style: TextStyle(
+                                                color: Colors.white70,
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 6),
+                                            const Text(
+                                              "TrustGuard automatically extracts article body text and fact-checks claims using live Google Search Grounding.",
+                                              style: TextStyle(
+                                                color: Colors.white38,
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 16),
                                             TextField(
+                                              controller: _urlController,
+                                              onChanged: (_) => setState(() {}),
                                               decoration: InputDecoration(
                                                 prefixIcon: const Icon(
-                                                  Icons.link,
-                                                  color: Colors.white54,
+                                                  Icons.link_rounded,
+                                                  color: AppTheme.primaryColor,
                                                 ),
-                                                hintText: "https://example.com",
-                                                hintStyle: TextStyle(
+                                                suffixIcon: _urlController.text.isNotEmpty
+                                                    ? IconButton(
+                                                        icon: const Icon(
+                                                          Icons.close,
+                                                          size: 18,
+                                                          color: Colors.white54,
+                                                        ),
+                                                        onPressed: () {
+                                                          setState(() {
+                                                            _urlController.clear();
+                                                          });
+                                                        },
+                                                      )
+                                                    : null,
+                                                hintText: "https://example.com/news-story",
+                                                hintStyle: const TextStyle(
                                                   color: Colors.white30,
                                                 ),
                                                 border: OutlineInputBorder(
                                                   borderRadius:
                                                       BorderRadius.circular(12),
-                                                  borderSide: BorderSide.none,
+                                                  borderSide: BorderSide(
+                                                    color: AppTheme.primaryColor.withOpacity(0.3),
+                                                  ),
+                                                ),
+                                                enabledBorder: OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(12),
+                                                  borderSide: const BorderSide(
+                                                    color: Colors.white12,
+                                                  ),
+                                                ),
+                                                focusedBorder: OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(12),
+                                                  borderSide: const BorderSide(
+                                                    color: AppTheme.primaryColor,
+                                                  ),
                                                 ),
                                                 filled: true,
-                                                fillColor: Colors.black12,
+                                                fillColor: Colors.black26,
                                               ),
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 16),
+                                            const Text(
+                                              "Quick test with sample links:",
+                                              style: TextStyle(
+                                                color: Colors.white54,
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 8),
+                                            Wrap(
+                                              spacing: 8,
+                                              runSpacing: 8,
+                                              children: [
+                                                _buildSampleUrlChip(
+                                                  "🌐 Wikipedia: Earth",
+                                                  "https://en.wikipedia.org/wiki/Earth",
+                                                ),
+                                                _buildSampleUrlChip(
+                                                  "🔭 NASA Official",
+                                                  "https://www.nasa.gov",
+                                                ),
+                                                _buildSampleUrlChip(
+                                                  "📰 BBC News",
+                                                  "https://www.bbc.com",
+                                                ),
+                                              ],
                                             ),
                                           ],
                                         ),
@@ -290,9 +529,11 @@ class _DetectionPageState extends State<DetectionPage>
                                             color: Colors.black,
                                           ),
                                         )
-                                      : const Text(
-                                          "ANALYZE",
-                                          style: TextStyle(
+                                      : Text(
+                                          _tabController.index == 1
+                                              ? "ANALYZE URL"
+                                              : "ANALYZE TEXT",
+                                          style: const TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 16,
                                           ),
@@ -311,6 +552,44 @@ class _DetectionPageState extends State<DetectionPage>
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildSampleChip(String label, String contentText) {
+    return ActionChip(
+      label: Text(
+        label,
+        style: const TextStyle(color: Colors.white, fontSize: 12),
+      ),
+      backgroundColor: Colors.white.withOpacity(0.08),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: BorderSide(color: AppTheme.primaryColor.withOpacity(0.3)),
+      ),
+      onPressed: () {
+        setState(() {
+          _textController.text = contentText;
+        });
+      },
+    );
+  }
+
+  Widget _buildSampleUrlChip(String label, String targetUrl) {
+    return ActionChip(
+      label: Text(
+        label,
+        style: const TextStyle(color: Colors.white, fontSize: 12),
+      ),
+      backgroundColor: Colors.white.withOpacity(0.08),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: BorderSide(color: AppTheme.primaryColor.withOpacity(0.3)),
+      ),
+      onPressed: () {
+        setState(() {
+          _urlController.text = targetUrl;
+        });
+      },
     );
   }
 }

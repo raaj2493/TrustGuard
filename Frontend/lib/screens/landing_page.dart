@@ -50,19 +50,21 @@ class _LandingPageState extends State<LandingPage>
       backgroundColor: AppTheme.darkBackground,
       body: Stack(
         children: [
-          // Background Image
+          // Sleek dark glow background
           Positioned.fill(
-            child: Image.asset(
-              "assets/background.png",
-              fit: BoxFit.cover,
-              color: const Color(
-                0xFF000000,
-              ).withValues(alpha: 0.7), // Dark overlay
-              colorBlendMode: BlendMode.darken,
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: RadialGradient(
+                  center: Alignment.topCenter,
+                  radius: 1.2,
+                  colors: [
+                    AppTheme.primaryColor.withValues(alpha: 0.08),
+                    AppTheme.darkBackground,
+                  ],
+                ),
+              ),
             ),
           ),
-
-          // Main Content
 
           // Main Content
           SingleChildScrollView(
@@ -149,7 +151,8 @@ class _LandingPageState extends State<LandingPage>
                                 TextSpan(
                                   text: "Scams & Fakes",
                                   style: TextStyle(
-                                    color: Colors.transparent,
+                                    color: AppTheme.primaryColor,
+                                    fontWeight: FontWeight.bold,
                                     shadows: [
                                       Shadow(
                                         offset: const Offset(0, 0),
@@ -158,19 +161,6 @@ class _LandingPageState extends State<LandingPage>
                                             .withOpacity(0.5),
                                       ),
                                     ],
-                                    decoration: TextDecoration.none,
-                                    // Gradient text hack
-                                    background: Paint()
-                                      ..color = AppTheme.primaryColor
-                                      ..shader =
-                                          const LinearGradient(
-                                            colors: [
-                                              AppTheme.primaryColor,
-                                              AppTheme.accentColor,
-                                            ],
-                                          ).createShader(
-                                            const Rect.fromLTWH(0, 0, 400, 100),
-                                          ),
                                   ),
                                 ),
                                 const TextSpan(text: "\nBefore They Strike"),
@@ -461,18 +451,26 @@ class _LandingPageState extends State<LandingPage>
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text(
-                                "© 2026 TrustGuard. All rights reserved.",
-                                style: TextStyle(
-                                  color: Colors.white30,
-                                  fontSize: 12,
+                              Flexible(
+                                child: const Text(
+                                  "© 2026 TrustGuard. All rights reserved.",
+                                  style: TextStyle(
+                                    color: Colors.white30,
+                                    fontSize: 12,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
-                              const Text(
-                                "Powered by AI • Built for Safety",
-                                style: TextStyle(
-                                  color: Colors.white30,
-                                  fontSize: 12,
+                              const SizedBox(width: 16),
+                              Flexible(
+                                child: const Text(
+                                  "Powered by AI • Built for Safety",
+                                  style: TextStyle(
+                                    color: Colors.white30,
+                                    fontSize: 12,
+                                  ),
+                                  textAlign: TextAlign.end,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
                             ],

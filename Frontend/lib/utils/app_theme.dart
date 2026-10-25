@@ -55,15 +55,15 @@ class AppTheme {
   // Glassmorphism decoration
   static BoxDecoration glassDecoration({Color? color}) {
     return BoxDecoration(
-      color: (color ?? darkSurface).withValues(alpha: 0.6),
+        color: (color ?? darkSurface).withValues(alpha: 0.6),
       borderRadius: BorderRadius.circular(20),
       border: Border.all(
-        color: Colors.white.withOpacity(0.1),
+        color: Colors.white.withValues(alpha: 0.1),
         width: 1.5,
       ),
       boxShadow: [
         BoxShadow(
-          color: Colors.black.withOpacity(0.2),
+          color: Colors.black.withValues(alpha: 0.2),
           blurRadius: 16,
           spreadRadius: 2,
         )

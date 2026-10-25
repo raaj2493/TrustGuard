@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Design Workshop Lab Manual - Ashutosh Giri (2500331530089)</title>
+
+    <style>
+        /* ==========================================================================
+           1. PRINT & DOCUMENT LAYOUT STYLES
+           ========================================================================== */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        @page {
+            size: A4 portrait;
+            margin: 0;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            color: #1a1a1a;
+            background-color: #e2e8f0;
+            line-height: 1.35;
+            font-size: 11.5px;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .page {
+            width: 210mm;
+            height: 297mm;
+            padding: 10mm 12mm;
+            margin: 15px auto;
+            background: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            page-break-after: always;
+            break-after: page;
+            overflow: hidden;
+        }
+
+        @media print {
+            body { background: none; font-size: 11px; }
+            .page {
+                width: 210mm;
+                height: 297mm;
+                margin: 0;
+                padding: 10mm 12mm;
+                box-shadow: none;
+                page-break-after: always;
+                break-after: page;
+            }
+            .no-print { display: none !important; }
+        }
+
+        .header-banner {
+            border-bottom: 2px solid #0a2540;
+            padding-bottom: 6px;
+            margin-bottom: 8px;
+            text-align: center;
+            width: 100%;
+        }
+
+        .cover-box {
+            border: 2px solid #000;
+            margin-bottom: 8px;
+            text-align: center;
+            padding: 8px;
+            background-color: #fff;
+        }
+
+        .doc-title {
+            text-align: center;
+            font-size: 16px;
+            font-weight: 900;
+            color: #0a2540;
+            margin: 4px 0;
+            text-transform: uppercase;
+        }
+
+        .section-header {
+            background-color: #0a2540;
+            color: #ffffff;
+            padding: 3px 8px;
+            font-size: 11px;
+            font-weight: bold;
+            border-radius: 3px;
+            margin: 6px 0 4px 0;
+        }
+
+        .exp-info {
+            display: flex;
+            justify-content: space-between;
+            background-color: #f1f5f9;
+            border-left: 4px solid #0a2540;
+            padding: 5px 8px;
+            font-weight: bold;
+            margin-bottom: 6px;
+            font-size: 11px;
+        }
+
+        .index-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 4px 0;
+            font-size: 9.5px;
+        }
+
+        .index-table th, .index-table td {
+            border: 1px solid #000;
+            padding: 4px 5px;
+            text-align: left;
+        }
+
+        .index-table th {
+            background-color: #f1f5f9;
+            color: #000;
+            font-weight: bold;
+        }
+
+        pre {
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            padding: 6px 8px;
+            border-radius: 4px;
+            font-family: "Courier New", Courier, monospace;
+            font-size: 8.5px;
+            line-height: 1.2;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            border: 1px solid #333;
+            margin: 3px 0 6px 0;
+        }
+
+        .code-title {
+            font-size: 9px;
+            font-weight: bold;
+            background: #333;
+            color: #fff;
+            padding: 2px 6px;
+            border-top-left-radius: 3px;
+            border-top-right-radius: 3px;
+            display: inline-block;
+            margin-bottom: -3px;
+        }
+
+        .syllabus-mockup {
+            border: 2px solid #555;
+            background-color: #fff;
+            font-family: Arial, sans-serif;
+            margin: 6px 0;
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .syllabus-header {
+            display: flex;
+            border-bottom: 1.5px solid #555;
+            background-color: #f4a261;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .syllabus-header .logo-box {
+            width: 20%;
+            border-right: 1.5px solid #555;
+            padding: 6px;
+            font-size: 11px;
+        }
+
+        .syllabus-header .title-box {
+            width: 80%;
+            padding: 6px;
+            font-size: 12px;
+        }
+
+        .syllabus-nav {
+            display: flex;
+            border-bottom: 1.5px solid #555;
+            background-color: #f4a261;
+        }
+
+        .syllabus-nav div {
+            flex: 1;
+            text-align: center;
+            border-right: 1px solid #555;
+            padding: 4px 0;
+            font-size: 10px;
+            font-weight: bold;
+        }
+        .syllabus-nav div:last-child { border-right: none; }
+
+        .syllabus-body {
+            display: flex;
+            min-height: 120px;
+            background-color: #fff;
+        }
+
+        .syllabus-sidebar {
+            width: 20%;
+            border-right: 1.5px solid #555;
+            background-color: #fff;
+            padding: 6px;
+            font-size: 10px;
+            font-weight: bold;
+            line-height: 1.6;
+        }
+
+        .syllabus-content {
+            width: 80%;
+            padding: 8px;
+            background-color: #fff;
+            font-size: 10.5px;
+        }
+
+        .mock-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 10px;
+        }
+
+        .mock-table td, .mock-table th {
+            border: 1px solid #777;
+            padding: 4px;
+            text-align: left;
+        }
+
+        .cart-btn-style {
+            background-color: #f4a261;
+            border: 1px solid #000;
+            padding: 2px 6px;
+            font-size: 9px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 2px;
+        }
+
+        .footer {
+            border-top: 1.5px solid #0a2540;
+            padding-top: 4px;
+            margin-top: auto;
+            font-size: 9px;
+            font-weight: bold;
+            color: #333;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .print-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #0a2540;
+            color: #fff;
+            padding: 10px 18px;
+            border: none;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            z-index: 1000;
+        }
+        .print-btn:hover { background: #001f4d; }
+    </style>
+</head>
+<body>
+
+    <button class="print-btn no-print" onclick="window.print()">Print Lab Manual (PDF)</button>
+
+    <!-- ========================================== -->
+    <!-- PAGE 1: COVER PAGE                         -->
+    <!-- ========================================== -->
+    <div class="page">
+        <div>
+            <div style="text-align: center; position: relative; width: 100%; margin-bottom: 10px;">
+                <!-- Curved Header Arc -->
+                <svg viewBox="0 0 600 60" style="width: 100%; height: 60px;">
+                    <defs>
+                        <path id="textArc" d="M 30,55 A 250,90 0 0,1 570,55" fill="none" />
+                    </defs>
+                    <text font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="900" fill="#0a2540" letter-spacing="0.5">
+                        <textPath href="#textArc" startOffset="50%" text-anchor="middle">
+                            RAJ KUMAR GOEL INSTITUTE OF TECHNOLOGY
+                        </textPath>
+                    </text>
+                </svg>
+
+                <!-- Official RKGIT Logo from Brandfetch Asset URL -->
+                <div style="text-align: center; margin: 5px 0 10px 0;">
+                    <img src="https://asset.brandfetch.io/iddoT1vwj3/id2P0WfS_P.png" alt="RKGIT Logo" style="height: 120px; max-width: 100%; object-fit: contain;">
+                </div>
+            </div>
+
+            <div class="cover-box" style="margin-top: 5px; padding: 10px;">
+                <h2 style="font-size: 15px; font-weight: 900; color: #000; letter-spacing: 0.5px; margin-bottom: 4px;">
+                    BACHELOR OF TECHNOLOGY - COMPUTER SCIENCE &amp; ENGINEERING
+                </h2>
+                <h3 style="font-size: 14px; font-weight: 900; color: #000; margin-bottom: 8px;">
+                    ACADEMIC SESSION 2026-2027
+                </h3>
+                <h2 style="font-size: 16px; font-weight: 900; color: #000; text-decoration: underline; letter-spacing: 1px;">
+                    LAB PRACTICAL FILE
+                </h2>
+            </div>
+
+            <div class="cover-box" style="padding: 8px;">
+                <h3 style="font-size: 14px; font-weight: 900; color: #000; letter-spacing: 0.5px;">
+                    SUBJECT: WEB DESIGN WORKSHOP (BCS-353)
+                </h3>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; gap: 10px; margin-bottom: 8px;">
+                <div class="cover-box" style="width: 50%; text-align: left; padding: 10px; margin-bottom: 0;">
+                    <h3 style="font-size: 13px; font-weight: 900; text-decoration: underline; margin-bottom: 6px;">
+                        SUBMITTED BY :-
+                    </h3>
+                    <p style="font-size: 12px; font-weight: bold; margin-bottom: 4px;">NAME: ASHUTOSH GIRI</p>
+                    <p style="font-size: 12px; font-weight: bold; margin-bottom: 4px;">ROLL NO: 2500331530089</p>
+                    <p style="font-size: 12px; font-weight: bold; margin-bottom: 4px;">BRANCH: CSE</p>
+                    <p style="font-size: 12px; font-weight: bold;">SEMESTER: 3<sup>rd</sup> SEMESTER / 2<sup>nd</sup> YEAR</p>
+                </div>
+
+                <div class="cover-box" style="width: 50%; text-align: left; padding: 10px; margin-bottom: 0;">
+                    <h3 style="font-size: 13px; font-weight: 900; text-decoration: underline; margin-bottom: 6px;">
+                        SUBMITTED TO :-
+                    </h3>
+                    <p style="font-size: 12px; font-weight: bold; margin-bottom: 4px;">VIDHI SHARMA</p>
+                    <p style="font-size: 12px; font-weight: bold; margin-bottom: 4px;">(ASSISTANT PROFESSOR)</p>
+                    <p style="font-size: 12px; font-weight: bold;">DEPARTMENT OF CSE</p>
+                </div>
+            </div>
+
+            <div class="cover-box" style="padding: 8px; margin-bottom: 0;">
+                <p style="font-size: 11.5px; font-weight: 900; color: #000; line-height: 1.3;">
+                    5<sup>th</sup> Km Stone Delhi, Meerut Rd, Near Raj Nagar Extension Road,<br>
+                    Ghaziabad, Uttar Pradesh 201003
+                </p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <span>Prepared by: Ashutosh Giri | Roll No: 2500331530089</span>
+            <span>Submitted to: Vidhi Sharma</span>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- PAGE 2: INDEX LOG SHEET                    -->
+    <!-- ========================================== -->
+    <div class="page">
+        <div>
+            <div class="header-banner">
+                <svg viewBox="0 0 1000 70" xmlns="http://www.w3.org/2000/svg">
+                    <text x="500" y="30" font-family="Arial" font-size="22" font-weight="900" fill="#0a2540" text-anchor="middle">RAJ KUMAR GOEL INSTITUTE OF TECHNOLOGY, GHAZIABAD</text>
+                    <text x="500" y="50" font-family="Arial" font-size="12" font-weight="bold" fill="#0a2540" text-anchor="middle">Department of Computer Science &amp; Engineering | Web Design Workshop Lab</text>
+                </svg>
+            </div>
+
+            <div class="doc-title" style="font-size: 15px; margin-bottom: 8px;">INDEX LOG SHEET</div>
+
+            <table class="index-table">
+                <thead>
+                    <tr>
+                        <th style="width: 6%; text-align: center;">Exp No.</th>
+                        <th style="width: 52%;">Experiment Title / Description</th>
+                        <th style="width: 11%; text-align: center;">Date Cond.</th>
+                        <th style="width: 11%; text-align: center;">Date Sub.</th>
+                        <th style="width: 8%; text-align: center;">Marks</th>
+                        <th style="width: 12%; text-align: center;">Sign.</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="text-align: center; font-weight: bold;">1</td>
+                        <td><strong>Static Bookstore Homepage (Multi-Frame Layout)</strong><br><small>3-frame structure with Logo, Navigation Links, Department Sidebar, and Main Description[cite: 1, 2].</small></td>
+                        <td></td><td></td><td></td><td></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center; font-weight: bold;">2</td>
+                        <td><strong>User Login Page Implementation</strong><br><small>Designing a structured Login Form with Username, Password, Submit &amp; Reset buttons[cite: 1, 2].</small></td>
+                        <td></td><td></td><td></td><td></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center; font-weight: bold;">3</td>
+                        <td><strong>Bookstore Catalogue Page</strong><br><small>Tabular catalog with Cover Snapshot, Author Name, Publisher, Price, and Add-to-Cart buttons[cite: 1, 2].</small></td>
+                        <td></td><td></td><td></td><td></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center; font-weight: bold;">4</td>
+                        <td><strong>Cart Page Implementation</strong><br><small>Itemized shopping cart displaying Book Name, Price, Quantity, Amount, and Total Computation[cite: 1, 2].</small></td>
+                        <td></td><td></td><td></td><td></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center; font-weight: bold;">5</td>
+                        <td><strong>User Registration Page</strong><br><small>Form capturing Name, Password, Email, Phone, Gender, DOB, Languages, and Address[cite: 1, 2].</small></td>
+                        <td></td><td></td><td></td><td></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center; font-weight: bold;">6</td>
+                        <td><strong>JavaScript Validation Part I</strong><br><small>Client-side validation for Name (&ge;6 chars) and Password (&ge;6 chars) fields[cite: 2].</small></td>
+                        <td></td><td></td><td></td><td></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center; font-weight: bold;">7</td>
+                        <td><strong>JavaScript Validation Part II</strong><br><small>Regex pattern validation for E-mail ID and 10-digit Phone Number fields[cite: 2].</small></td>
+                        <td></td><td></td><td></td><td></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center; font-weight: bold;">8</td>
+                        <td><strong>CSS Styling &amp; Custom Backgrounds</strong><br><small>Applying inline, internal styles, custom fonts, selectors, and page background image[cite: 2].</small></td>
+                        <td></td><td></td><td></td><td></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center; font-weight: bold;">9</td>
+                        <td><strong>CSS Links &amp; Image Repetition</strong><br><small>Controlling background-repeat and styling hyperlink pseudo-states (:link, :visited, :hover, :active)[cite: 2].</small></td>
+                        <td></td><td></td><td></td><td></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center; font-weight: bold;">10</td>
+                        <td><strong>Static Web Project Development</strong><br><small>Developing complete static website on chosen topic (Portfolio / To-Do / Survey / Tribute / Questionnaire)[cite: 2].</small></td>
+                        <td></td><td></td><td></td><td></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div style="margin-top: 10px; font-size: 10px; line-height: 1.4; background-color: #f8fafc; padding: 8px; border-radius: 4px; border: 1px solid #d0d7de;">
+                <strong>Lab Evaluation Criteria:</strong>
+                <ul style="margin-left: 18px; margin-top: 3px;">
+                    <li>Performance &amp; Code Structure (10 Marks)</li>
+                    <li>Practical Output Representation (10 Marks)</li>
+                    <li>Viva-Voce &amp; Lab Record Maintenance (10 Marks)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer">
+            <span>Prepared by: Ashutosh Giri | Roll No: 2500331530089</span>
+            <span>Submitted to: Vidhi Sharma</span>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- PAGE 3: EXPERIMENT 1                       -->
+    <!-- ========================================== -->
+    <div class="page">
+        <div>
+            <div class="exp-info">
+                <span>EXPERIMENT NO: 01</span>
+                <span>DATE: ____________</span>
+            </div>
+
+            <div style="font-size: 13px; font-weight: bold; color: #002b66; margin-bottom: 4px;">
+                TITLE: Design static HOMEPAGE required for an online bookstore website.
+            </div>
+
+            <div class="section-header">1. AIM &amp; REQUIREMENTS</div>
+            <p>To create a static home page using three HTML frames: Top frame containing Logo, Web Site Name, and navigation links (Home, Login, Registration, Catalogue, Cart); Left frame listing academic departments; Right frame displaying default website description[cite: 1].</p>
+
+            <div class="section-header">2. SOURCE CODE IMPLEMENTATION</div>
+            <div class="code-title">index.html (Main Layout)</div>
+            <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;Online Bookstore Portal&lt;/title&gt;
+&lt;/head&gt;
+&lt;frameset rows="25%, 75%" frameborder="1" border="2" bordercolor="#555555"&gt;
+    &lt;frame src="header.html" name="topFrame" scrolling="no" noresize="noresize"&gt;
+    &lt;frameset cols="20%, 80%"&gt;
+        &lt;frame src="sidebar.html" name="leftFrame" scrolling="auto"&gt;
+        &lt;frame src="main.html" name="rightFrame" scrolling="auto"&gt;
+    &lt;/frameset&gt;
+&lt;/frameset&gt;
+&lt;/html&gt;</code></pre>
+
+            <div class="code-title">header.html (Top Frame)</div>
+            <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;Header&lt;/title&gt;
+    &lt;style&gt;
+        body { background-color: #f4a261; margin: 0; padding: 0; text-align: center; font-family: Arial, sans-serif; }
+        .logo-table, .nav-table { width: 100%; border-collapse: collapse; }
+        .logo-table td { border: 1px solid #555555; padding: 6px; }
+        .logo-box { font-size: 12px; font-weight: bold; width: 20%; }
+        .title-box { font-size: 18px; font-weight: bold; width: 80%; }
+        .nav-table td { border: 1px solid #555555; padding: 4px; font-weight: bold; font-size: 11px; width: 20%; }
+        a { text-decoration: none; color: #000000; }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;table class="logo-table"&gt;
+        &lt;tr&gt;
+            &lt;td class="logo-box"&gt;Logo&lt;/td&gt;
+            &lt;td class="title-box"&gt;WebSite Name&lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/table&gt;
+    &lt;table class="nav-table"&gt;
+        &lt;tr&gt;
+            &lt;td&gt;&lt;a href="main.html" target="rightFrame"&gt;Home&lt;/a&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;a href="login.html" target="rightFrame"&gt;Login&lt;/a&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;a href="registration.html" target="rightFrame"&gt;Registration&lt;/a&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;a href="catalogue.html" target="rightFrame"&gt;Catalogue&lt;/a&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;a href="cart.html" target="rightFrame"&gt;Cart&lt;/a&gt;&lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/table&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+            <div class="code-title">sidebar.html &amp; main.html</div>
+            <pre><code>&lt;!-- sidebar.html --&gt;
+&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;body style="font-family:Arial; font-weight:bold; font-size:11px; padding:10px;"&gt;
+CSE&lt;br&gt;&lt;br&gt;ECE&lt;br&gt;&lt;br&gt;EEE&lt;br&gt;&lt;br&gt;CIVIL
+&lt;/body&gt;&lt;/html&gt;
+
+&lt;!-- main.html --&gt;
+&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;body style="font-family:Arial; text-align:center; padding-top:40px;"&gt;
+&lt;h3&gt;Description of the WebSite&lt;/h3&gt;
+&lt;p style="font-size:11px; color:#555;"&gt;Welcome to Online Academic Bookstore Portal.&lt;/p&gt;
+&lt;/body&gt;&lt;/html&gt;</code></pre>
+
+            <div class="section-header">3. VISUAL OUTPUT SIMULATION</div>
+            <div class="syllabus-mockup">
+                <div class="syllabus-header">
+                    <div class="logo-box">Logo</div>
+                    <div class="title-box">WebSite Name</div>
+                </div>
+                <div class="syllabus-nav">
+                    <div>Home</div><div>Login</div><div>Registration</div><div>Catalogue</div><div>Cart</div>
+                </div>
+                <div class="syllabus-body">
+                    <div class="syllabus-sidebar">CSE<br>ECE<br>EEE<br>CIVIL</div>
+                    <div class="syllabus-content" style="text-align: center; padding-top: 30px;">
+                        <strong>Description of the WebSite</strong>
+                        <p style="margin-top: 8px; color: #555; font-size: 10px;">Welcome to the online academic bookstore. Select a department from the left menu to explore books[cite: 1].</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <span>Prepared by: Ashutosh Giri | Roll No: 2500331530089</span>
+            <span>Submitted to: Vidhi Sharma</span>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- PAGE 4: EXPERIMENT 2                       -->
+    <!-- ========================================== -->
+    <div class="page">
+        <div>
+            <div class="exp-info">
+                <span>EXPERIMENT NO: 02</span>
+                <span>DATE: ____________</span>
+            </div>
+
+            <div style="font-size: 13px; font-weight: bold; color: #002b66; margin-bottom: 4px;">
+                TITLE: Design a LOGIN PAGE inside the bookstore frame structure.
+            </div>
+
+            <div class="section-header">1. AIM &amp; REQUIREMENTS</div>
+            <p>To design an interactive Login Page featuring User Name and Password input fields along with Submit and Reset buttons, rendered inside the right frame of the bookstore portal layout[cite: 1].</p>
+
+            <div class="section-header">2. SOURCE CODE IMPLEMENTATION</div>
+            <div class="code-title">login.html (Full Code with CSS)</div>
+            <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;Login Page&lt;/title&gt;
+    &lt;style&gt;
+        body { font-family: Arial, sans-serif; background-color: #ffffff; text-align: center; margin-top: 30px; }
+        .login-box { display: inline-block; padding: 20px; }
+        .login-title { font-size: 14px; font-weight: bold; margin-bottom: 15px; }
+        table { border-collapse: collapse; margin: auto; }
+        td { padding: 6px 10px; font-weight: bold; font-size: 11px; text-align: left; }
+        input[type="text"], input[type="password"] { border: 2px solid #000000; padding: 4px; width: 140px; font-size: 11px; }
+        .btn-container { margin-top: 15px; text-align: center; }
+        .btn { padding: 4px 14px; font-weight: bold; font-size: 11px; border: 2px solid #000000; background-color: #ffffff; cursor: pointer; margin: 0 4px; }
+        .btn:hover { background-color: #e0e0e0; }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class="login-box"&gt;
+        &lt;div class="login-title"&gt;Login Page&lt;/div&gt;
+        &lt;form action="dashboard.html" method="POST"&gt;
+            &lt;table&gt;
+                &lt;tr&gt;
+                    &lt;td&gt;User Name:&lt;/td&gt;
+                    &lt;td&gt;&lt;input type="text" name="uname" required="required"&gt;&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                    &lt;td&gt;Passwords:&lt;/td&gt;
+                    &lt;td&gt;&lt;input type="password" name="pwd" required="required"&gt;&lt;/td&gt;
+                &lt;/tr&gt;
+            &lt;/table&gt;
+            &lt;div class="btn-container"&gt;
+                &lt;input type="submit" value="Submit" class="btn"&gt;
+                &lt;input type="reset" value="Reset" class="btn"&gt;
+            &lt;/div&gt;
+        &lt;/form&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+            <div class="section-header">3. VISUAL OUTPUT SIMULATION</div>
+            <div class="syllabus-mockup">
+                <div class="syllabus-header">
+                    <div class="logo-box">Logo</div>
+                    <div class="title-box">WebSite Name</div>
+                </div>
+                <div class="syllabus-nav">
+                    <div>Home</div><div>Login</div><div>Registration</div><div>Catalogue</div><div>Cart</div>
+                </div>
+                <div class="syllabus-body">
+                    <div class="syllabus-sidebar">CSE<br>ECE<br>EEE<br>CIVIL</div>
+                    <div class="syllabus-content" style="text-align: center; padding-top: 15px;">
+                        <div style="font-weight: bold; font-size: 12px; margin-bottom: 8px;">Login Page</div>
+                        <table style="margin: auto; font-size: 10px; font-weight: bold;">
+                            <tr>
+                                <td>User Name:</td>
+                                <td><input type="text" value="ashutosh_giri" style="border: 1.5px solid #000; width: 100px; padding: 2px;" readonly></td>
+                            </tr>
+                            <tr>
+                                <td>Passwords:</td>
+                                <td><input type="password" value="******" style="border: 1.5px solid #000; width: 100px; padding: 2px;" readonly></td>
+                            </tr>
+                        </table>
+                        <div style="margin-top: 12px;">
+                            <button style="border: 1.5px solid #000; background: #fff; padding: 3px 10px; font-weight: bold; font-size: 10px; margin-right: 5px;">Submit</button>
+                            <button style="border: 1.5px solid #000; background: #fff; padding: 3px 10px; font-weight: bold; font-size: 10px;">Reset</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <span>Prepared by: Ashutosh Giri | Roll No: 2500331530089</span>
+            <span>Submitted to: Vidhi Sharma</span>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- PAGE 5: EXPERIMENT 3                       -->
+    <!-- ========================================== -->
+    <div class="page">
+        <div>
+            <div class="exp-info">
+                <span>EXPERIMENT NO: 03</span>
+                <span>DATE: ____________</span>
+            </div>
+
+            <div style="font-size: 13px; font-weight: bold; color: #002b66; margin-bottom: 4px;">
+                TITLE: Design CATALOGUE PAGE with book details and Add to Cart options.
+            </div>
+
+            <div class="section-header">1. AIM &amp; REQUIREMENTS</div>
+            <p>To design a book catalogue table displaying: 1. Snap shot of Cover Page, 2. Author Name &amp; Book Title, 3. Publisher, 4. Price, and 5. Add to Cart button[cite: 1].</p>
+
+            <div class="section-header">2. SOURCE CODE IMPLEMENTATION</div>
+            <div class="code-title">catalogue.html (Full Code with CSS)</div>
+            <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;Catalogue Page&lt;/title&gt;
+    &lt;style&gt;
+        body { font-family: Arial, sans-serif; margin: 0; padding: 10px; background-color: #ffffff; }
+        table { width: 100%; border-collapse: collapse; font-size: 11px; }
+        td { border: 1px solid #777777; padding: 8px; text-align: left; vertical-align: middle; }
+        .book-details { line-height: 1.4; }
+        .price-col { font-weight: bold; font-size: 11px; width: 15%; }
+        .btn-col { width: 25%; text-align: center; }
+        .cart-btn { background-color: #f4a261; border: 1px solid #000000; padding: 4px 8px; font-size: 10px; font-weight: bold; border-radius: 3px; cursor: pointer; }
+        .cart-btn:hover { background-color: #e76f51; color: #ffffff; }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;table&gt;
+        &lt;tr&gt;
+            &lt;td width="15%" align="center"&gt;&lt;img src="xml_bible.jpg" width="40" height="50" alt="XML Bible Cover"&gt;&lt;/td&gt;
+            &lt;td class="book-details"&gt;&lt;b&gt;Book: XML Bible&lt;/b&gt;&lt;br&gt;Author: Winston&lt;br&gt;Publication: Wiely&lt;/td&gt;
+            &lt;td class="price-col"&gt;$40.5&lt;/td&gt;
+            &lt;td class="btn-col"&gt;&lt;button class="cart-btn"&gt;Add to cart&lt;/button&gt;&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td align="center"&gt;&lt;img src="ai_book.jpg" width="40" height="50" alt="AI Cover"&gt;&lt;/td&gt;
+            &lt;td class="book-details"&gt;&lt;b&gt;Book: AI&lt;/b&gt;&lt;br&gt;Author: S.Russel&lt;br&gt;Publication: Princetonhall&lt;/td&gt;
+            &lt;td class="price-col"&gt;$63&lt;/td&gt;
+            &lt;td class="btn-col"&gt;&lt;button class="cart-btn"&gt;Add to cart&lt;/button&gt;&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td align="center"&gt;&lt;img src="java2.jpg" width="40" height="50" alt="Java 2 Cover"&gt;&lt;/td&gt;
+            &lt;td class="book-details"&gt;&lt;b&gt;Book: Java 2&lt;/b&gt;&lt;br&gt;Author: Watson&lt;br&gt;Publication: BPBpublications&lt;/td&gt;
+            &lt;td class="price-col"&gt;$35.5&lt;/td&gt;
+            &lt;td class="btn-col"&gt;&lt;button class="cart-btn"&gt;Add to cart&lt;/button&gt;&lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/table&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+            <div class="section-header">3. VISUAL OUTPUT SIMULATION</div>
+            <div class="syllabus-mockup">
+                <div class="syllabus-header">
+                    <div class="logo-box">Logo</div>
+                    <div class="title-box">WebSite Name</div>
+                </div>
+                <div class="syllabus-nav">
+                    <div>Home</div><div>Login</div><div>Registration</div><div>Catalogue</div><div>Cart</div>
+                </div>
+                <div class="syllabus-body">
+                    <div class="syllabus-sidebar">CSE<br>ECE<br>EEE<br>CIVIL</div>
+                    <div class="syllabus-content" style="padding: 4px;">
+                        <table class="mock-table">
+                            <tr>
+                                <td width="15%" align="center"><div style="background:#b8860b; color:#fff; width:28px; height:36px; font-size:7.5px; display:flex; align-items:center; justify-content:center;">XML Bible</div></td>
+                                <td><b>Book: XML Bible</b><br>Author: Winston<br>Publication: Wiely</td>
+                                <td>$40.5</td>
+                                <td align="center"><button class="cart-btn-style">Add to cart</button></td>
+                            </tr>
+                            <tr>
+                                <td align="center"><div style="background:#2b6cb0; color:#fff; width:28px; height:36px; font-size:7.5px; display:flex; align-items:center; justify-content:center;">AI</div></td>
+                                <td><b>Book: AI</b><br>Author: S. Russel<br>Publication: Princetonhall</td>
+                                <td>$63</td>
+                                <td align="center"><button class="cart-btn-style">Add to cart</button></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <span>Prepared by: Ashutosh Giri | Roll No: 2500331530089</span>
+            <span>Submitted to: Vidhi Sharma</span>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- PAGE 6: EXPERIMENT 4                       -->
+    <!-- ========================================== -->
+    <div class="page">
+        <div>
+            <div class="exp-info">
+                <span>EXPERIMENT NO: 04</span>
+                <span>DATE: ____________</span>
+            </div>
+
+            <div style="font-size: 13px; font-weight: bold; color: #002b66; margin-bottom: 4px;">
+                TITLE: Design CART PAGE displaying added items and total amount.
+            </div>
+
+            <div class="section-header">1. AIM &amp; REQUIREMENTS</div>
+            <p>To design a shopping cart page displaying the list of selected books, individual prices, quantity ordered, dynamic amount per item, and final total calculated amount[cite: 1].</p>
+
+            <div class="section-header">2. SOURCE CODE IMPLEMENTATION</div>
+            <div class="code-title">cart.html (Full Code with CSS)</div>
+            <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;Cart Page&lt;/title&gt;
+    &lt;style&gt;
+        body { font-family: Arial, sans-serif; margin: 0; padding: 10px; background-color: #ffffff; }
+        table { width: 100%; border-collapse: collapse; font-size: 11px; }
+        th, td { border: 1px solid #777777; padding: 6px 10px; text-align: left; }
+        th { background-color: #f4a261; font-weight: bold; }
+        .total-row td { font-weight: bold; background-color: #f8f9fa; }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;table align="center"&gt;
+        &lt;thead&gt;
+            &lt;tr&gt;
+                &lt;th width="40%"&gt;Book name&lt;/th&gt;
+                &lt;th width="20%"&gt;Price&lt;/th&gt;
+                &lt;th width="20%"&gt;Quantity&lt;/th&gt;
+                &lt;th width="20%"&gt;Amount&lt;/th&gt;
+            &lt;/tr&gt;
+        &lt;/thead&gt;
+        &lt;tbody&gt;
+            &lt;tr&gt;
+                &lt;td&gt;Java 2&lt;/td&gt;
+                &lt;td&gt;$35.5&lt;/td&gt;
+                &lt;td&gt;2&lt;/td&gt;
+                &lt;td&gt;$70&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;XML bible&lt;/td&gt;
+                &lt;td&gt;$40.5&lt;/td&gt;
+                &lt;td&gt;1&lt;/td&gt;
+                &lt;td&gt;$40.5&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr class="total-row"&gt;
+                &lt;td colspan="3"&gt;Total amount&lt;/td&gt;
+                &lt;td&gt;$130.5&lt;/td&gt;
+            &lt;/tr&gt;
+        &lt;/tbody&gt;
+    &lt;/table&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+            <div class="section-header">3. VISUAL OUTPUT SIMULATION</div>
+            <div class="syllabus-mockup">
+                <div class="syllabus-header">
+                    <div class="logo-box">Logo</div>
+                    <div class="title-box">WebSite Name</div>
+                </div>
+                <div class="syllabus-nav">
+                    <div>Home</div><div>Login</div><div>Registration</div><div>Catalogue</div><div>Cart</div>
+                </div>
+                <div class="syllabus-body">
+                    <div class="syllabus-sidebar">CSE<br>ECE<br>EEE<br>CIVIL</div>
+                    <div class="syllabus-content" style="padding: 8px;">
+                        <table class="mock-table">
+                            <tr style="font-weight: bold; background: #f4a261;">
+                                <td>Book name</td>
+                                <td>Price</td>
+                                <td>Quantity</td>
+                                <td>Amount</td>
+                            </tr>
+                            <tr>
+                                <td>Java 2</td>
+                                <td>$35.5</td>
+                                <td>2</td>
+                                <td>$70</td>
+                            </tr>
+                            <tr>
+                                <td>XML bible</td>
+                                <td>$40.5</td>
+                                <td>1</td>
+                                <td>$40.5</td>
+                            </tr>
+                            <tr style="font-weight: bold;">
+                                <td colspan="3">Total amount</td>
+                                <td>$130.5</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <span>Prepared by: Ashutosh Giri | Roll No: 2500331530089</span>
+            <span>Submitted to: Vidhi Sharma</span>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- PAGE 7: EXPERIMENT 5                       -->
+    <!-- ========================================== -->
+    <div class="page">
+        <div>
+            <div class="exp-info">
+                <span>EXPERIMENT NO: 05</span>
+                <span>DATE: ____________</span>
+            </div>
+
+            <div style="font-size: 13px; font-weight: bold; color: #002b66; margin-bottom: 4px;">
+                TITLE: Create a REGISTRATION PAGE with comprehensive form controls.
+            </div>
+
+            <div class="section-header">1. AIM &amp; REQUIREMENTS</div>
+            <p>To design a complete Registration Form capturing: 1) Name, 2) Password, 3) Email, 4) Phone Number, 5) Sex (radio buttons), 6) DOB (3 select boxes), 7) Languages known (checkboxes: English, Telugu, Hindi, Tamil), 8) Address text area[cite: 1].</p>
+
+            <div class="section-header">2. SOURCE CODE IMPLEMENTATION</div>
+            <div class="code-title">registration.html (Full Code with CSS)</div>
+            <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;Registration Form&lt;/title&gt;
+    &lt;style&gt;
+        body { font-family: Arial, sans-serif; margin: 0; padding: 10px; background-color: #ffffff; }
+        .form-title { text-align: center; font-size: 13px; font-weight: bold; margin-bottom: 10px; }
+        table { margin: auto; font-size: 11px; border-collapse: collapse; }
+        td { padding: 4px 8px; vertical-align: middle; }
+        input[type="text"], input[type="password"], input[type="email"], input[type="tel"], textarea, select { border: 1px solid #555555; padding: 3px; font-size: 10px; }
+        .sub-btn { padding: 4px 12px; font-weight: bold; font-size: 10px; border: 1px solid #000000; background-color: #e0e0e0; cursor: pointer; margin: 0 4px; }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class="form-title"&gt;REGISTRATION FORM&lt;/div&gt;
+    &lt;form action="submit.html" method="POST"&gt;
+        &lt;table&gt;
+            &lt;tr&gt;&lt;td&gt;1) Name:&lt;/td&gt;&lt;td&gt;&lt;input type="text" name="name" required="required"&gt;&lt;/td&gt;&lt;/tr&gt;
+            &lt;tr&gt;&lt;td&gt;2) Password:&lt;/td&gt;&lt;td&gt;&lt;input type="password" name="pwd" required="required"&gt;&lt;/td&gt;&lt;/tr&gt;
+            &lt;tr&gt;&lt;td&gt;3) E-mail id:&lt;/td&gt;&lt;td&gt;&lt;input type="email" name="email" required="required"&gt;&lt;/td&gt;&lt;/tr&gt;
+            &lt;tr&gt;&lt;td&gt;4) Phone Number:&lt;/td&gt;&lt;td&gt;&lt;input type="tel" name="phone"&gt;&lt;/td&gt;&lt;/tr&gt;
+            &lt;tr&gt;&lt;td&gt;5) Sex:&lt;/td&gt;&lt;td&gt;&lt;input type="radio" name="sex" value="Male" checked="checked"&gt;Male &lt;input type="radio" name="sex" value="Female"&gt;Female&lt;/td&gt;&lt;/tr&gt;
+            &lt;tr&gt;&lt;td&gt;6) Date of birth:&lt;/td&gt;&lt;td&gt;
+                &lt;select name="day"&gt;&lt;option&gt;15&lt;/option&gt;&lt;/select&gt;
+                &lt;select name="month"&gt;&lt;option&gt;Aug&lt;/option&gt;&lt;/select&gt;
+                &lt;select name="year"&gt;&lt;option&gt;2004&lt;/option&gt;&lt;/select&gt;
+            &lt;/td&gt;&lt;/tr&gt;
+            &lt;tr&gt;&lt;td&gt;7) Languages known:&lt;/td&gt;&lt;td&gt;
+                &lt;input type="checkbox" name="lang" value="English" checked="checked"&gt;English
+                &lt;input type="checkbox" name="lang" value="Telugu"&gt;Telugu
+                &lt;input type="checkbox" name="lang" value="Hindi" checked="checked"&gt;Hindi
+                &lt;input type="checkbox" name="lang" value="Tamil"&gt;Tamil
+            &lt;/td&gt;&lt;/tr&gt;
+            &lt;tr&gt;&lt;td&gt;8) Address:&lt;/td&gt;&lt;td&gt;&lt;textarea name="address" rows="3" cols="22"&gt;&lt;/textarea&gt;&lt;/td&gt;&lt;/tr&gt;
+            &lt;tr&gt;&lt;td colspan="2" align="center" style="padding-top:8px;"&gt;&lt;input type="submit" value="Register" class="sub-btn"&gt; &lt;input type="reset" value="Reset" class="sub-btn"&gt;&lt;/td&gt;&lt;/tr&gt;
+        &lt;/table&gt;
+    &lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+            <div class="section-header">3. VISUAL OUTPUT SIMULATION</div>
+            <div class="syllabus-mockup">
+                <div class="syllabus-header">
+                    <div class="logo-box">Logo</div>
+                    <div class="title-box">WebSite Name</div>
+                </div>
+                <div class="syllabus-nav">
+                    <div>Home</div><div>Login</div><div>Registration</div><div>Catalogue</div><div>Cart</div>
+                </div>
+                <div class="syllabus-body">
+                    <div class="syllabus-sidebar">CSE<br>ECE<br>EEE<br>CIVIL</div>
+                    <div class="syllabus-content" style="padding: 4px;">
+                        <table style="font-size: 9px; width: 100%;">
+                            <tr><td>1) Name:</td><td><input type="text" value="Ashutosh Giri" style="font-size:8.5px;" readonly></td></tr>
+                            <tr><td>2) Password:</td><td><input type="password" value="secret123" style="font-size:8.5px;" readonly></td></tr>
+                            <tr><td>3) E-mail id:</td><td><input type="email" value="ashutosh.giri@rkgit.edu.in" style="font-size:8.5px;" readonly></td></tr>
+                            <tr><td>4) Phone Number:</td><td><input type="text" value="9876543210" style="font-size:8.5px;" readonly></td></tr>
+                            <tr><td>5) Sex:</td><td><input type="radio" checked disabled> Male <input type="radio" disabled> Female</td></tr>
+                            <tr><td>6) Date of birth:</td><td><select disabled style="font-size:8px;"><option>15 Aug 2004</option></select></td></tr>
+                            <tr><td>7) Languages:</td><td><input type="checkbox" checked disabled> English <input type="checkbox" checked disabled> Hindi</td></tr>
+                            <tr><td>8) Address:</td><td><textarea style="font-size:8px; width:90%; height:18px;" readonly>Ghaziabad, UP</textarea></td></tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <span>Prepared by: Ashutosh Giri | Roll No: 2500331530089</span>
+            <span>Submitted to: Vidhi Sharma</span>
+        </div>
+    </div>
+
+</body>
+</html>

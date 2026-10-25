@@ -40,7 +40,7 @@ class TrustMeter extends StatelessWidget {
                       child: CircularProgressIndicator(
                         value: 1.0,
                         strokeWidth: 15,
-                        color: Colors.white.withOpacity(0.1),
+                        color: Colors.white.withValues(alpha: 0.1),
                       ),
                     ),
                   ),
@@ -81,7 +81,7 @@ class TrustMeter extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
               decoration: BoxDecoration(
-                color: _getColor(score).withOpacity(0.1),
+                color: _getColor(score).withValues(alpha: 0.1),
                 border: Border.all(color: _getColor(score)),
                 borderRadius: BorderRadius.circular(20),
               ),

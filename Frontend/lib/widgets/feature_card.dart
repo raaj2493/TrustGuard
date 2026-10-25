@@ -31,14 +31,14 @@ class _FeatureCardState extends State<FeatureCard>
         duration: const Duration(milliseconds: 200),
         transform: Matrix4.identity()..translate(0, isHovered ? -10.0 : 0.0),
         child: GlassCard(
-          color: isHovered ? AppTheme.darkSurface.withOpacity(0.8) : null,
+          color: isHovered ? AppTheme.darkSurface.withValues(alpha: 0.8) : null,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: AppTheme.primaryColor.withOpacity(0.1),
+                  color: AppTheme.primaryColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
